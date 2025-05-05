@@ -1,0 +1,209 @@
+
+
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  padding: 20px;
+  background-color: #F9FAFB;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* center content */
+#start-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 50vh; /* penuh tinggi layar */
+  text-align: center;
+
+}
+
+/* bacground gradient */
+.background-blur {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.4), rgba(164, 219, 255, 0.4), rgba(208, 117, 236, 0.4));
+  backdrop-filter: blur(30px); /* blur di belakang elemen ini */
+  -webkit-backdrop-filter: blur(30px); /* untuk Safari */
+  z-index: -1;
+}
+
+h1 {
+  color: #1E3A8A;
+}
+
+h3 {
+  font-style: italic;
+  color: #3B82F6;
+}
+
+#start-screen h1,
+#start-screen h3,
+#start-screen input,
+#start-screen button,
+#start-screen img {
+  margin: 13px 0;
+}
+
+
+input[type="text"] {
+  padding: 13px;
+  padding-left: 50px;
+  padding-right: 50px;
+  margin: 5px 5px 5px 5px;
+  font-size: 16px;
+  text-align: center;
+  border: none;
+  outline: none;
+  background-color: rgba(255, 255, 255, 0.83);
+  color: #333;
+  backdrop-filter: blur(30px);
+  border-radius: 8px;
+}
+
+button {
+  padding: 10px 60px 10px 60px;
+  margin: 10px 5px 10px 5px;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  background-color: #3B82F6;
+  color: white;
+  border-radius: 8px;
+}
+
+button:hover {
+  background-color: #3874d4;
+}
+
+#timer {
+  margin-bottom: 30px;
+  /* background-color: rgba(255, 255, 255, 0.83); */
+  backdrop-filter: blur(30px);
+  padding: 13px;
+  font-weight: bold;
+}
+
+#question {
+  margin: 20px 0;
+  margin-bottom: 30px;
+
+}
+
+.option {
+  display: block;
+  margin: 8px;
+  margin-bottom: 30px;
+}
+
+button {
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+
+
+/*#question-container, #question {
+  text-align: left;
+  margin: 0 auto;
+  max-width: 600px;*/ /* biar gak terlalu lebar */
+/*}*/
+
+
+
+#options {
+  text-align: left;
+  margin: 0 auto;
+  max-width: 600px;
+}
+
+
+
+
+
+/* Dark mode styles */
+body.dark-mode {
+  background-color: #121212;
+  color: #f0f0f0;
+}
+
+body.dark-mode input,
+body.dark-mode button,
+body.dark-mode select {
+  background-color: #1e1e1e;
+  color: #fff;
+  border: 1px solid #444;
+}
+
+body.dark-mode .option {
+  color: #f0f0f0;
+}
+
+#toggle-dark {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  font-size: 24px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 999;
+  color: #333;
+}
+
+body.dark-mode #toggle-dark {
+  color: #f0f0f0;
+}
+
+/* edit hasil */
+#result-screen {
+  background-color: white;
+  padding: 70px;
+  background-color: rgba(255, 255, 255, 0.63);
+  backdrop-filter: blur(30px);
+  border-radius: 20px;
+}
+
+
+
+/*button kirim bawah*/
+#submit-btn {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12px 24px;
+  font-size: 16px;
+  background-color: #c51c1c;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  z-index: 999;
+}
+
+body.dark-mode #submit-btn {
+  background-color: #555;
+  color: #fff;
+}
+
+
+
+#logo {
+  width: 150px; /* bisa lo ubah sesuai kebutuhan */
+  margin-bottom: 5px;
+}
+
+
+
+
