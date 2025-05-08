@@ -1,22 +1,34 @@
 <!DOCTYPE html>
 <html lang="id">
-  
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Tryout Frontend</title>
-  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
+
+  <!-- Layar Awal -->
   <div id="start-screen">
     <img src="logo.png" alt="Logo Tryout" id="logo">
     <h1>Oman's Club Academy</h1>
     <h3>"Online Tryout Website"</h3>
     <input type="text" id="nameInput" placeholder="Masukkan namamu.."/>
-    <button onclick="startQuiz()">Mulai</button>
+    <button onclick="goToPackageScreen()">Mulai</button>
   </div>
 
+  <!-- Pilih Paket Soal -->
+  <div id="package-screen" style="display: none;">
+    <h2>Halo, <span id="displayName"></span>!</h2>
+    <p>Pilih Paket Soal:</p>
+    <button onclick="startQuiz('skd_cpns')">SKD CPNS</button>
+    <button onclick="startQuiz('skd_sekdin')">SKD SEKDIN</button>
+    <button onclick="startQuiz('tni_polri')">TNI & POLRI</button>
+    <button onclick="startQuiz('bumn')">BUMN</button>
+    <button onclick="startQuiz('unhan')">UNHAN</button>
+  </div>
+
+  <!-- Layar Quiz -->
   <div id="quiz-screen" style="display: none;">
     <div id="timer">Waktu: <span id="time">30</span> detik</div>
     <div id="question-container">
@@ -28,14 +40,417 @@
     <button id="submit-btn" onclick="submitQuiz()">Kirim Jawaban</button>
   </div>
 
+  <!-- Hasil Akhir -->
   <div id="result-screen" style="display: none;">
     <h2>Skor Akhir</h2>
     <p id="final-name"></p>
     <p id="final-score"></p>
+    <p id="final-package"></p>
   </div>
-<button id="toggle-dark" onclick="toggleDarkMode()">🌙</button>
 
-<div class="background-blur"></div>
-  <script src="script.js"></script>
+  <!-- Script utama -->
+  <script>
+    // Variabel global
+    let userName = "";
+    let selectedPackage = "";
+    let questions = [];
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let timer;
+    let timeLeft = 30;
+    let userAnswers = [];
+
+    // Fungsi untuk pindah ke layar pemilihan paket
+    function goToPackageScreen() {
+      const name = document.getElementById("nameInput").value.trim();
+      if (name === "") {
+        alert("Masukkan namamu dulu!");
+        return;
+      }
+      userName = name;
+      document.getElementById("start-screen").style.display = "none";
+      document.getElementById("package-screen").style.display = "block";
+      document.getElementById("displayName").textContent = userName;
+    }
+
+    // Timer soal, auto submit kalau waktunya habis
+    function formatTime(seconds) {
+      const minutes = Math.floor(seconds / 60);
+      const secs = seconds % 60;
+      return `${minutes}:${secs < 10 ? "0" : ""}${secs}`;
+    }
+
+    function startTimer() {
+      timeLeft = 180; // 3 menit
+      document.getElementById("time").textContent = formatTime(timeLeft);
+      timer = setInterval(() => {
+        timeLeft--;
+        document.getElementById("time").textContent = formatTime(timeLeft);
+        if (timeLeft <= 0) {
+          clearInterval(timer);
+          alert("Waktu habis! Jawaban akan dikirim otomatis.");
+          submitQuiz();
+        }
+      }, 1000);
+    }
+
+    // Daftar semua paket soal
+    const allQuestions = {
+      skd_cpns: [
+        {
+          question: "Suku bunga bank yang dikenakan pada pinjaman disebut:",
+          options: ["Suku bunga nominal", "Suku bunga efektif", "Suku bunga tetap", "Suku bunga kredit"],
+          answer: 3
+        },
+        {
+          question: "Berikut yang bukan merupakan salah satu prinsip dasar ekonomi adalah:",
+          options: ["Keterbatasan", "Kebutuhan yang tidak terbatas", "Pemilihan antara alternatif", "Ketergantungan terhadap sumber daya alam"],
+          answer: 3
+        },
+        {
+          question: "Jika dua buah segitiga memiliki panjang sisi yang sama dan sudut yang sama, maka kedua segitiga tersebut:",
+          options: ["Sama besar", "Sama panjang", "Sama bentuk", "Sama panjang dan bentuk"],
+          answer: 0
+        },
+        {
+          question: "Penyelenggara pemerintahan daerah di Indonesia terdiri dari:",
+          options: ["Gubernur dan DPRD", "Gubernur dan MPR", "Presiden dan DPR", "Menteri dan DPRD"],
+          answer: 0
+        },
+        {
+          question: "Manakah di bawah ini yang merupakan contoh dari komunikasi verbal?",
+          options: ["Menulis surat", "Mengirim pesan teks", "Mengangkat tangan", "Menggunakan ekspresi wajah"],
+          answer: 0
+        },
+        {
+          question: "Dalam matematika, bilangan prima adalah:",
+          options: ["Bilangan yang hanya bisa dibagi oleh dirinya sendiri dan 1", "Bilangan yang memiliki lebih dari dua pembagi", "Bilangan yang lebih besar dari 10", "Bilangan genap yang lebih besar dari 2"],
+          answer: 0
+        },
+        {
+          question: "Siapa yang dikenal sebagai Bapak Proklamator Indonesia?",
+          options: ["Soekarno dan Hatta", "Soekarno dan Sjahrir", "Hatta dan Subandrio", "Soekarno dan Tan Malaka"],
+          answer: 0
+        },
+        {
+          question: "Ciri-ciri negara yang berdaulat adalah:",
+          options: ["Memiliki wilayah, penduduk, dan pemerintah", "Memiliki wilayah dan pemerintahan yang baik", "Memiliki penduduk yang terbatas", "Memiliki sistem monarki"],
+          answer: 0
+        },
+        {
+          question: "Kalimat berikut yang merupakan kalimat deklaratif adalah:",
+          options: ["Apakah kamu sudah makan?", "Jangan lupa membawa tas.", "Hari ini sangat cerah.", "Ayo kita berlari!"],
+          answer: 2
+        },
+        {
+          question: "Kebijakan moneter berfungsi untuk:",
+          options: ["Mengatur anggaran negara", "Mengendalikan inflasi", "Mengatur penerimaan pajak", "Menyusun rencana pembangunan"],
+          answer: 1
+        }
+      ],
+
+      skd_sekdin: [
+        {
+          question: "Bentuk negara Indonesia menurut UUD 1945 adalah:",
+          options: ["Federasi", "Serikat", "Kesatuan", "Koloni"],
+          answer: 2
+        },
+        {
+          question: "Semboyan “Bhinneka Tunggal Ika” berasal dari kitab:",
+          options: ["Ramayana", "Negarakertagama", "Sutasoma", "Arjuna Wiwaha"],
+          answer: 2
+        },
+        {
+          question: "Jika hari ini hari Senin, maka 100 hari ke depan akan jatuh pada hari:",
+          options: ["Rabu", "Kamis", "Jumat", "Sabtu"],
+          answer: 1
+        },
+        {
+          question: "Bentuk lain dari peribahasa 'Bagai air di daun talas' adalah:",
+          options: ["Tidak teguh pendirian", "Mudah menyerah", "Suka menolong", "Lemah lembut"],
+          answer: 0
+        },
+        {
+          question: "Antonim dari kata “Ekspansif” adalah:",
+          options: ["Menyempit", "Meluas", "Progresif", "Mengembang"],
+          answer: 0
+        },
+        {
+          question: "Jika Anda menerima tugas yang belum pernah Anda kerjakan sebelumnya, Anda akan:",
+          options: ["Menolak tugas karena takut salah", "Mencoba memahami dan belajar terlebih dahulu", "Menunggu instruksi lanjutan", "Meminta orang lain untuk mengerjakannya"],
+          answer: 1
+        },
+        {
+          question: "Anda menyadari bahwa rekan satu tim tidak menyelesaikan tugas tepat waktu. Sikap Anda adalah:",
+          options: ["Melaporkan ke atasan langsung", "Memarahinya di depan umum", "Mengingatkannya dan menawarkan bantuan", "Membiarkan karena bukan tanggung jawab Anda"],
+          answer: 2
+        },
+        {
+          question: "Dalam bekerja, Anda dituntut menyelesaikan tugas dalam waktu singkat. Apa yang Anda lakukan?",
+          options: ["Menyelesaikan dengan asal-asalan", "Fokus dan mengatur waktu dengan baik", "Mendelegasikan semuanya ke rekan", "Menunda tugas karena merasa berat"],
+          answer: 1
+        },
+        {
+          question: "Ketika Anda melihat rekan kerja melakukan kesalahan kecil, Anda akan:",
+          options: ["Langsung menegur dengan keras", "Mengabaikannya", "Memberi tahu secara pribadi dengan cara baik", "Menyebarkan ke rekan lain"],
+          answer: 2
+        },
+        {
+          question: "Anda mendapat tugas tambahan di luar jam kerja. Sikap Anda:",
+          options: ["Menolaknya karena di luar jam kerja", "Menerima jika ada kompensasi", "Menerima dengan ikhlas jika itu demi kepentingan bersama", "Menyuruh orang lain melakukannya"],
+          answer: 2
+        }
+      ],
+
+      tni_polri: [
+        {
+          question: "Semboyan TNI adalah:",
+          options: ["Setia Hingga Mati", "Bersatu Kita Teguh", "Bersama Rakyat TNI Kuat", "Jaya Selalu TNI"],
+          answer: 2
+        },
+        {
+          question: "Lambang dari Kepolisian Republik Indonesia adalah:",
+          options: ["Garuda Pancasila", "Tribrata", "Cakra", "Bintang Kejora"],
+          answer: 1
+        },
+        {
+          question: "Tanggal berdirinya TNI adalah:",
+          options: ["17 Agustus 1945", "5 Oktober 1945", "10 November 1945", "1 Juni 1945"],
+          answer: 1
+        },
+        {
+          question: "Istilah 'Brimob' dalam Polri berarti:",
+          options: ["Brigade Mobil", "Brigade Modern", "Barisan Polisi", "Batalion Reaksi Cepat"],
+          answer: 0
+        },
+        {
+          question: "Panglima TNI bertanggung jawab langsung kepada:",
+          options: ["Kapolri", "DPR", "Presiden", "MPR"],
+          answer: 2
+        },
+        {
+          question: "Sumpah prajurit TNI disebut juga dengan:",
+          options: ["Tri Satya", "Sapta Marga", "Dasa Darma", "Tri Dharma"],
+          answer: 1
+        },
+        {
+          question: "Salah satu tugas utama Polri adalah:",
+          options: ["Menjaga kedaulatan udara", "Menciptakan stabilitas ekonomi", "Menjaga keamanan dan ketertiban masyarakat", "Melatih prajurit TNI"],
+          answer: 2
+        },
+        {
+          question: "Kepala Kepolisian Negara Republik Indonesia disebut:",
+          options: ["Komandan Nasional", "Panglima Polri", "Kapolri", "Ketua Polisi"],
+          answer: 2
+        },
+        {
+          question: "Mako Brimob Pusat berada di:",
+          options: ["Depok", "Bogor", "Cilacap", "Magelang"],
+          answer: 0
+        },
+        {
+          question: "Senjata laras panjang standar yang digunakan TNI saat ini adalah:",
+          options: ["SS1-V1", "M16", "AK-47", "FN FAL"],
+          answer: 0
+        }
+      ], 
+
+      bumn: [
+        {
+          question: "Apa kepanjangan dari BUMN?",
+          options: ["Badan Umum Milik Negara", "Badan Usaha Milik Negara", "Badan Usaha Masyarakat Nasional", "Badan Usaha Modal Negara"],
+          answer: 1
+        },
+        {
+          question: "Tujuan utama BUMN adalah:",
+          options: ["Mengejar keuntungan pribadi", "Memberi layanan sosial", "Melayani masyarakat dan menghasilkan keuntungan", "Menghindari pajak"],
+          answer: 2
+        },
+        {
+          question: "Contoh perusahaan BUMN di sektor perbankan adalah:",
+          options: ["BCA", "Mandiri", "CIMB Niaga", "Danamon"],
+          answer: 1
+        },
+        {
+          question: "Siapa yang memiliki dan mengawasi BUMN?",
+          options: ["Pemerintah Pusat", "Pemerintah Daerah", "Swasta", "Investor Asing"],
+          answer: 0
+        },
+        {
+          question: "Perusahaan yang mengelola jaringan listrik di Indonesia adalah:",
+          options: ["Pertamina", "Telkom", "PLN", "Indosat"],
+          answer: 2
+        },
+        {
+          question: "Kementerian yang membina BUMN adalah:",
+          options: ["Kementerian Perdagangan", "Kementerian Keuangan", "Kementerian BUMN", "Kementerian Ketenagakerjaan"],
+          answer: 2
+        },
+        {
+          question: "Telkom Indonesia bergerak di bidang:",
+          options: ["Transportasi", "Pertambangan", "Telekomunikasi", "Kelistrikan"],
+          answer: 2
+        },
+        {
+          question: "Apa bentuk badan hukum umum dari BUMN?",
+          options: ["CV dan PT", "PT dan Persero", "Koperasi dan CV", "Yayasan dan Firma"],
+          answer: 1
+        },
+        {
+          question: "BUMN yang bergerak di bidang minyak dan gas bumi adalah:",
+          options: ["Pertamina", "PLN", "Telkom", "Garuda Indonesia"],
+          answer: 0
+        },
+        {
+          question: "Contoh BUMN yang berbentuk Perum adalah:",
+          options: ["Perum Bulog", "PT Freeport", "PT Astra", "CV Cipta Jaya"],
+          answer: 0
+        }
+      ],
+      
+      unhan: [
+        {
+          question: "Apa kepanjangan dari UNHAN?",
+          options: ["Universitas Hukum Nasional", "Universitas Harapan Nusantara", "Universitas Pertahanan", "Universitas Negara dan Hankam"],
+          answer: 2
+        },
+        {
+          question: "UNHAN berada di bawah naungan kementerian:",
+          options: ["Kementerian Pendidikan dan Kebudayaan", "Kementerian Riset dan Teknologi", "Kementerian Pertahanan", "Kementerian Dalam Negeri"],
+          answer: 2
+        },
+        {
+          question: "Kampus utama UNHAN berlokasi di:",
+          options: ["Bandung", "Jakarta", "Bogor", "Magelang"],
+          answer: 2
+        },
+        {
+          question: "Salah satu fakultas di UNHAN adalah:",
+          options: ["Fakultas Ekonomi dan Bisnis", "Fakultas Teknik", "Fakultas Strategi Pertahanan", "Fakultas Ilmu Sosial dan Politik"],
+          answer: 2
+        },
+        {
+          question: "Mata kuliah yang umumnya diajarkan di UNHAN adalah:",
+          options: ["Manajemen Perhotelan", "Strategi Militer", "Hukum Perdata", "Pertanian Berkelanjutan"],
+          answer: 1
+        },
+        {
+          question: "Bahasa asing yang menjadi fokus pembelajaran di UNHAN adalah:",
+          options: ["Bahasa Korea", "Bahasa Arab", "Bahasa Inggris", "Bahasa Spanyol"],
+          answer: 2
+        },
+        {
+          question: "Lulusan UNHAN diarahkan untuk berkontribusi dalam bidang:",
+          options: ["Pertanian", "Pertahanan dan Keamanan", "Kewirausahaan", "Kesehatan masyarakat"],
+          answer: 1
+        },
+        {
+          question: "Program studi UNHAN terbuka untuk lulusan SMA sejak tahun:",
+          options: ["2015", "2017", "2019", "2020"],
+          answer: 3
+        },
+        {
+          question: "Kurikulum UNHAN banyak menekankan pada:",
+          options: ["Ekonomi Mikro", "Ilmu Keamanan dan Pertahanan", "Ilmu Komunikasi", "Seni dan Desain"],
+          answer: 1
+        },
+        {
+          question: "Salah satu syarat masuk UNHAN adalah:",
+          options: ["Harus lulusan IPS", "Lulus UTBK tanpa tes tambahan", "Bersedia tinggal di asrama dan mengikuti pendidikan militer dasar", "Membayar uang pangkal mahal"],
+          answer: 2
+        }
+      ]
+    };
+
+    // Mulai quiz berdasarkan paket yang dipilih
+    function startQuiz(paket) {
+      selectedPackage = paket;
+      document.getElementById("package-screen").style.display = "none";
+      document.getElementById("quiz-screen").style.display = "block";
+
+      questions = allQuestions[paket];
+      userAnswers = Array(questions.length).fill(null); // reset jawaban
+      currentQuestionIndex = 0;
+      score = 0;
+
+      showQuestion();
+      startTimer();
+    }
+
+    // Tampilkan soal dan opsi jawaban
+    function showQuestion() {
+      const q = questions[currentQuestionIndex];
+      document.getElementById("question").textContent = `Soal ${currentQuestionIndex + 1}: ${q.question}`;
+      const optionsDiv = document.getElementById("options");
+      optionsDiv.innerHTML = "";
+
+      q.options.forEach((opt, idx) => {
+        const label = document.createElement("label");
+        label.style.display = "block";
+        label.style.marginBottom = "8px";
+        label.style.cursor = "pointer";
+
+        const radio = document.createElement("input");
+        radio.type = "radio";
+        radio.name = "option";
+        radio.value = idx;
+
+        if (userAnswers[currentQuestionIndex] === idx) {
+          radio.checked = true;
+        }
+
+        radio.onchange = () => {
+          userAnswers[currentQuestionIndex] = idx;
+        };
+
+        label.appendChild(radio);
+        label.append(` ${String.fromCharCode(65 + idx)}. ${opt}`);
+        optionsDiv.appendChild(label);
+      });
+
+      // Disable tombol kalau di soal pertama / terakhir
+      document.querySelector("button[onclick='prevQuestion()']").disabled = currentQuestionIndex === 0;
+      document.querySelector("button[onclick='nextQuestion()']").disabled = currentQuestionIndex === questions.length - 1;
+    }
+
+    // Navigasi ke soal sebelumnya
+    function prevQuestion() {
+      if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        showQuestion();
+      }
+    }
+
+    // Navigasi ke soal berikutnya
+    function nextQuestion() {
+      if (currentQuestionIndex < questions.length - 1) {
+        currentQuestionIndex++;
+        showQuestion();
+      }
+    }
+
+    // Kirim jawaban dan tampilkan hasil
+    function submitQuiz() {
+      clearInterval(timer);
+      score = 0;
+
+      userAnswers.forEach((answer, index) => {
+        if (answer === questions[index].answer) {
+          score++;
+        }
+      });
+
+      document.getElementById("quiz-screen").style.display = "none";
+      document.getElementById("result-screen").style.display = "block";
+      document.getElementById("final-name").textContent = "Nama: " + userName;
+      document.getElementById("final-score").textContent = "Skor: " + score + " / " + questions.length;
+      document.getElementById("final-package").textContent = "Paket yang dipilih: " + selectedPackage.toUpperCase();
+    }
+
+    // Placeholder fungsi dark mode (kalau mau dikembangin)
+    function toggleDarkMode() {
+      document.body.classList.toggle("dark-mode");
+    }
+  </script>
 </body>
 </html>
