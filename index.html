@@ -46,6 +46,7 @@
     <p id="final-name"></p>
     <p id="final-score"></p>
     <p id="final-package"></p>
+    <button onclick="restartQuiz()">Selesai</button>
   </div>
 
   <!-- Script utama -->
@@ -445,6 +446,22 @@
       document.getElementById("final-name").textContent = "Nama: " + userName;
       document.getElementById("final-score").textContent = "Skor: " + score + " / " + questions.length;
       document.getElementById("final-package").textContent = "Paket yang dipilih: " + selectedPackage.toUpperCase();
+    }
+    
+    function restartQuiz() {
+    // Reset semua nilai & tampilan
+    userName = "";
+    selectedPackage = "";
+    questions = [];
+    currentQuestionIndex = 0;
+    score = 0;
+    userAnswers = [];
+
+    document.getElementById("nameInput").value = "";
+    document.getElementById("start-screen").style.display = "block";
+    document.getElementById("package-screen").style.display = "none";
+    document.getElementById("quiz-screen").style.display = "none";
+    document.getElementById("result-screen").style.display = "none";
     }
 
     // Placeholder fungsi dark mode (kalau mau dikembangin)
