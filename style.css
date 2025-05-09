@@ -35,8 +35,6 @@ body {
   text-align: left;
 }
 
-
-
 /* ==== LAYOUT UMUM ==== */
 #start-screen,
 #package-screen,
@@ -95,37 +93,6 @@ button:hover {
   font-weight: bold;
   margin-bottom: 15px;
   text-align: right;
-}
-
-/* ==== DARK MODE TOGGLE ==== */
-#toggle-dark {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: #333;
-  color: #fff;
-  padding: 8px 12px;
-  border-radius: 50%;
-  font-size: 18px;
-  border: none;
-  z-index: 999;
-}
-
-/* ==== DARK MODE STYLE ==== */
-body.dark-mode {
-  background: #121212;
-  color: #eee;
-}
-
-body.dark-mode input,
-body.dark-mode button,
-body.dark-mode #start-screen,
-body.dark-mode #package-screen,
-body.dark-mode #quiz-screen,
-body.dark-mode #result-screen {
-  background-color: #1e1e1e;
-  color: white;
-  border-color: #333;
 }
 
 /* ==== RESPONSIVE ==== */
