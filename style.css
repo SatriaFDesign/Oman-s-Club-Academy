@@ -61,6 +61,7 @@ input[type="text"] {
   border-radius: 8px;
   margin-bottom: 15px;
 }
+input[type="text"]:focus { outline-color: red; }
 
 button {
   background-color: #007bff;
