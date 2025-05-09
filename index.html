@@ -517,24 +517,25 @@ function sendToSheet(name, paket, score, answers) {
     
     // Kirim jawaban dan tampilkan hasil
     function submitQuiz() {
-      clearInterval(timer);
-      score = 0;
+  clearInterval(timer);
 
-      userAnswers.forEach((answer, index) => {
-        if (answer === questions[index].answer) {
-          score++;
-        }
-      });
+  // Hitung skor
+  score = 0;
+  questions.forEach((q, i) => {
+    if (userAnswers[i] == q.answer) score++;
+  });
 
-      document.getElementById("quiz-screen").style.display = "none";
-      document.getElementById("result-screen").style.display = "block";
-      document.getElementById("final-name").textContent = "Nama: " + userName;
-      document.getElementById("final-score").textContent = "Skor: " + score + " / " + questions.length;
-      document.getElementById("final-package").textContent = "Paket yang dipilih: " + selectedPackage.toUpperCase();
+  document.getElementById("quiz-screen").style.display = "none";
+  document.getElementById("result-screen").style.display = "block";
 
-        // Kirim ke Google Sheet
-  sendToSheet(userName, selectedPackage, score);
-    }
+  document.getElementById("final-name").textContent = `Nama: ${userName}`;
+  document.getElementById("final-score").textContent = `Skor: ${score} dari ${questions.length}`;
+  document.getElementById("final-package").textContent = `Paket: ${selectedPackage.toUpperCase()}`;
+
+  // Kirim ke Google Sheet
+  sendToSheet(userName, selectedPackage, score, userAnswers);
+}
+
     
     function restartQuiz() {
     // Reset semua nilai & tampilan
