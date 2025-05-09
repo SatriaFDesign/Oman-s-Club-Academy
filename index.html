@@ -488,6 +488,33 @@ function createQuestionNavigation() {
       }
     }
 
+function sendToSheet(name, paket, score, answers) {
+  fetch("https://script.google.com/macros/s/AKfycbz32XgNBZB94kh0fk8fU5Ye5aP_Z8s9uzMnJf7EVoE5_gzOdXq3h20p0UlWVpwM0uI9/exec", {
+    method: "POST",
+    body: JSON.stringify({
+      name: name,
+      package: paket,
+      score: score,
+      answers: answers
+    }),
+    headers: {
+      "Content-Type": "application/json"
+    }
+  })
+  .then(response => response.text())
+  .then(data => {
+    console.log("Data dikirim:", data);
+  })
+  .catch(error => {
+    console.error("Gagal kirim data:", error);
+  });
+}
+
+
+
+
+
+    
     // Kirim jawaban dan tampilkan hasil
     function submitQuiz() {
       clearInterval(timer);
@@ -504,6 +531,9 @@ function createQuestionNavigation() {
       document.getElementById("final-name").textContent = "Nama: " + userName;
       document.getElementById("final-score").textContent = "Skor: " + score + " / " + questions.length;
       document.getElementById("final-package").textContent = "Paket yang dipilih: " + selectedPackage.toUpperCase();
+
+        // Kirim ke Google Sheet
+  sendToSheet(userName, selectedPackage, score);
     }
     
     function restartQuiz() {
