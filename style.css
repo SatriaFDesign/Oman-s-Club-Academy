@@ -100,13 +100,13 @@ h3 {
 input[type="text"] {
   width: 100%;
   padding: 12px;
-  font-size: 16px;
-  border: 1px solid #ccc;
+  font-size: 18px;
+  border: 1px solid #6E6E6E;
   text-align: center;
   border-radius: 8px;
   margin-bottom: 15px;
 }
-input[type="text"]:focus { outline-color: #404045; }
+input[type="text"]:focus { outline-color: #6E6E6E; }
 
 button {
   background-color: #007bff;
