@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Tryout Frontend</title>
   <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -21,16 +22,20 @@
   <div id="package-screen" style="display: none;">
     <h2>Halo, <span id="displayName"></span>!</h2>
     <p>Pilih Paket Soal:</p>
-    <button onclick="startQuiz('skd_cpns')">SKD CPNS</button>
-    <button onclick="startQuiz('skd_sekdin')">SKD SEKDIN</button>
-    <button onclick="startQuiz('tni_polri')">TNI & POLRI</button>
-    <button onclick="startQuiz('bumn')">BUMN</button>
-    <button onclick="startQuiz('unhan')">UNHAN</button>
+
+    <div id="package-buttons">
+      <button onclick="startQuiz('skd_cpns')">SKD CPNS</button>
+      <button onclick="startQuiz('skd_sekdin')">SKD SEKDIN</button>
+      <button onclick="startQuiz('tni_polri')">TNI & POLRI</button>
+      <button onclick="startQuiz('bumn')">BUMN</button>
+      <button onclick="startQuiz('unhan')">UNHAN</button>
+    </div>
   </div>
 
   <!-- Layar Quiz -->
   <div id="quiz-screen" style="display: none;">
-    <div id="timer">Waktu: <span id="time">30</span> detik</div>
+    <div id="timer">Waktu: <span id="time">30</span> </div>
+    <div id="question-nav" style="margin-bottom: 16px;"></div>
     <div id="question-container">
       <h2 id="question"></h2>
       <div id="options"></div>
@@ -44,8 +49,11 @@
   <div id="result-screen" style="display: none;">
     <h2>Skor Akhir</h2>
     <p id="final-name"></p>
+    <br>
     <p id="final-score"></p>
+    <br>
     <p id="final-package"></p>
+    <br>
     <button onclick="restartQuiz()">Selesai</button>
   </div>
 
@@ -94,6 +102,36 @@
         }
       }, 1000);
     }
+
+function createQuestionNavigation() {
+  const navDiv = document.getElementById("question-nav");
+  navDiv.innerHTML = ""; // Kosongkan dulu
+
+  questions.forEach((_, index) => {
+    const btn = document.createElement("button");
+    btn.textContent = index + 1;
+    btn.style.margin = "2px";
+    btn.style.padding = "6px 10px";
+    btn.style.backgroundColor = "#eee";
+    btn.style.border = "1px solid #ccc";
+    btn.style.cursor = "pointer";
+
+    if (index === currentQuestionIndex) {
+      btn.style.backgroundColor = "#007BFF";
+      btn.style.color = "#fff";
+    }
+
+    btn.onclick = () => {
+      currentQuestionIndex = index;
+      showQuestion();
+    };
+
+    navDiv.appendChild(btn);
+  });
+}
+
+
+
 
     // Daftar semua paket soal
     const allQuestions = {
@@ -363,56 +401,76 @@
       ]
     };
 
-    // Mulai quiz berdasarkan paket yang dipilih
-    function startQuiz(paket) {
-      selectedPackage = paket;
-      document.getElementById("package-screen").style.display = "none";
-      document.getElementById("quiz-screen").style.display = "block";
+   function startQuiz(paket) {
+  const paketNama = paket.toUpperCase().replace(/_/g, " ");
+  const soal = allQuestions[paket];
+  const jumlahSoal = soal.length;
+  const durasiMenit = 3; // atau ubah sesuai timer kamu
 
-      questions = allQuestions[paket];
-      userAnswers = Array(questions.length).fill(null); // reset jawaban
-      currentQuestionIndex = 0;
-      score = 0;
+  const konfirmasi = confirm(
+    `Paket: ${paketNama}\nJumlah Soal: ${jumlahSoal}\nDurasi: ${durasiMenit} menit\n\nKlik OK untuk mulai mengerjakan.`
+  );
 
-      showQuestion();
-      startTimer();
-    }
+  if (!konfirmasi) return;
+
+  selectedPackage = paket;
+  document.getElementById("package-screen").style.display = "none";
+  document.getElementById("quiz-screen").style.display = "block";
+
+  questions = soal;
+  userAnswers = Array(jumlahSoal).fill(null); // reset jawaban
+  currentQuestionIndex = 0;
+  score = 0;
+
+  showQuestion();
+  startTimer();
+}
+
+
+
+
 
     // Tampilkan soal dan opsi jawaban
-    function showQuestion() {
-      const q = questions[currentQuestionIndex];
-      document.getElementById("question").textContent = `Soal ${currentQuestionIndex + 1}: ${q.question}`;
-      const optionsDiv = document.getElementById("options");
-      optionsDiv.innerHTML = "";
+   function showQuestion() {
+  const q = questions[currentQuestionIndex];
+  document.getElementById("question").innerHTML = `<span style="font-size: 18px; color: gray;">Soal ${currentQuestionIndex + 1}:</span><br><strong>${q.question}</strong>`;
+  const optionsDiv = document.getElementById("options");
+  optionsDiv.innerHTML = "";
 
-      q.options.forEach((opt, idx) => {
-        const label = document.createElement("label");
-        label.style.display = "block";
-        label.style.marginBottom = "8px";
-        label.style.cursor = "pointer";
+  q.options.forEach((opt, idx) => {
+    const label = document.createElement("label");
+    label.style.display = "flex";
+    label.style.alignItems = "flex-start";
+    label.style.gap = "10px";
+    label.style.marginBottom = "10px";
+    label.style.lineHeight = "1.5";
+    label.style.cursor = "pointer";
 
-        const radio = document.createElement("input");
-        radio.type = "radio";
-        radio.name = "option";
-        radio.value = idx;
+    const radio = document.createElement("input");
+    radio.type = "radio";
+    radio.name = "option";
+    radio.value = idx;
 
-        if (userAnswers[currentQuestionIndex] === idx) {
-          radio.checked = true;
-        }
-
-        radio.onchange = () => {
-          userAnswers[currentQuestionIndex] = idx;
-        };
-
-        label.appendChild(radio);
-        label.append(` ${String.fromCharCode(65 + idx)}. ${opt}`);
-        optionsDiv.appendChild(label);
-      });
-
-      // Disable tombol kalau di soal pertama / terakhir
-      document.querySelector("button[onclick='prevQuestion()']").disabled = currentQuestionIndex === 0;
-      document.querySelector("button[onclick='nextQuestion()']").disabled = currentQuestionIndex === questions.length - 1;
+    if (userAnswers[currentQuestionIndex] === idx) {
+      radio.checked = true;
     }
+
+    radio.onchange = () => {
+      userAnswers[currentQuestionIndex] = idx;
+    };
+
+    const span = document.createElement("span");
+    span.textContent = `${String.fromCharCode(65 + idx)}. ${opt}`;
+
+    label.appendChild(radio);
+    label.appendChild(span);
+    optionsDiv.appendChild(label);
+  });
+
+  document.querySelector("button[onclick='prevQuestion()']").disabled = currentQuestionIndex === 0;
+  document.querySelector("button[onclick='nextQuestion()']").disabled = currentQuestionIndex === questions.length - 1;
+}
+
 
     // Navigasi ke soal sebelumnya
     function prevQuestion() {
