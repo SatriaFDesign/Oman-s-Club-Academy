@@ -6,6 +6,7 @@
   font-family: 'Segoe UI', sans-serif;
 }
 
+/* Body Konten */
 body {
   background: linear-gradient(135deg, rgba(59, 130, 246, 0.4), rgba(164, 219, 255, 0.4), rgba(208, 117, 236, 0.4));
   backdrop-filter: blur(30px); /* blur di belakang elemen ini */
@@ -23,13 +24,15 @@ body {
   justify-content: center;
 }
 
+/* Logo */
 #logo {
-  width: 150px; /* bisa lo ubah sesuai kebutuhan */
+  width: 150px; /* bisa di ubah sesuai kebutuhan */
   margin-bottom: 5px;
   justify-content: center;
   align-items: center;
 }
 
+/* Pertanyaan dan jawban rata kiri */
 #question, #options {
   text-align: left;
 }
@@ -47,6 +50,7 @@ body {
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
+/* Styling warna font */
 h1, h2, h3 {
   text-align: center;
   margin-bottom: 20px;
@@ -59,23 +63,11 @@ h3 {
   color: #3B82F6;
 }
 
+
+/* Pengaturan Pemilihan Paket Soal */
 #package-screen P {
   margin-bottom: 8px;
 }
-
-/*#package-screen {
-  max-width: 800px;
-  margin: 40px auto;
-  padding: 20px;
-  border: 2px solid #ccc;
-  border-radius: 10px;
-  background-color: #f9f9f9;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.hidden {
-  display: none;
-}*/
 
 #package-screen {
   width: 500px;
@@ -97,6 +89,8 @@ h3 {
   cursor: pointer;
 }
 
+
+/* Text Input Tnama */
 input[type="text"] {
   width: 100%;
   padding: 12px;
@@ -108,6 +102,7 @@ input[type="text"] {
 }
 input[type="text"]:focus { outline-color: #6E6E6E; }
 
+/* Tombol Mulai Awalal */
 button {
   background-color: #007bff;
   color: white;
@@ -118,37 +113,11 @@ button {
   margin: 8px 4px;
   font-size: 16px;
 }
-
 button:hover {
   background-color: #0056b3;
 }
 
-
-#question-nav button {
-  display: inline-block;
-  min-width: 36px;
-  margin: 2px;
-  padding: 6px 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: #e0e0e0;
-  color: #000;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-#question-nav button.active {
-  background-color: #007BFF;
-  color: #fff;
-}
-
-#question-nav button.answered {
-  background-color: #28a745;
-  color: #fff;
-}
-
-
-
+/* Opsi Jawaban */
 #options label {
   display: flex;
   align-items: flex-start;
@@ -160,8 +129,6 @@ button:hover {
 #options input[type="radio"] {
   margin-top: 3px;
 }
-
-
 
 #options label {
   display: block;
@@ -204,6 +171,7 @@ button:hover {
   }
 }
 
+/* Tombol Nonaktif */
 button:disabled {
   background-color: #ccc !important;
   color: #666;
